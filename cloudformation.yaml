@@ -1,32 +1,32 @@
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   Department:
-    Description: 'Department'
+    Description: Department
     Type: String
   Project:
-    Description: 'Project'
+    Description: Project
     Type: String
   EnvCode:
-    Description: 'EnvCode'
-    Type: String     
+    Description: EnvCode
+    Type: String
   ComponentCode:
-    Description: '3 character Component Code'
+    Description: 3 character Component Code
     Type: String
   Component:
-    Description: 'Component'
+    Description: Component
     Type: String
   System:
-    Description: 'System'
+    Description: System
     Type: String
   Service:
-    Description: 'Service Discovery Cloud Map Service ID'
+    Description: Service Discovery Cloud Map Service ID
     Type: String
 Resources:
   Bucket:
-    Type: 'AWS::S3::Bucket'
+    Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
-      BucketName: !Sub '${Department}-${Project}-${EnvCode}-${System}-${ComponentCode}-${Component}'
+      BucketName: ${Department}-${Project}-${EnvCode}-${System}-${ComponentCode}-${Component}
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -36,31 +36,31 @@ Resources:
     Type: AWS::ServiceDiscovery::Instance
     Properties:
       InstanceAttributes:
-        NAME: !Ref Bucket
+        NAME: Bucket
         TYPE: S3.Bucket
-        ARN: !GetAtt Bucket.Arn
-        URL: !Sub 'http://${Bucket}.s3-website-${AWS::Region}.amazonaws.com/'
+        ARN: Bucket.Arn
+        URL: http://${Bucket}.s3-website-${AWS::Region}.amazonaws.com/
         ID: NA
-        COMPONENT: !Sub '${ComponentCode}-${Component}'
-        SYSTEM: !Ref System
-      InstanceId: !Sub '${System}-${ComponentCode}-${Component}'
-      ServiceId: !Ref Service
+        COMPONENT: ${ComponentCode}-${Component}
+        SYSTEM: System
+      InstanceId: ${System}-${ComponentCode}-${Component}
+      ServiceId: Service
     DependsOn:
       - Bucket
 Outputs:
   ResourceName:
     Description: The name of the component resource created
-    Value: !Ref Bucket
+    Value: Bucket
     Export:
-      Name: !Join 
-        - ':'
-        - - !Ref 'AWS::StackName'
+      Name:
+        - ":"
+        - - AWS::StackName
           - ResourceName
   ResourceArn:
     Description: The ARN of the component resource created
-    Value: !GetAtt Bucket.Arn
+    Value: Bucket.Arn
     Export:
-      Name: !Join
-        - ':'
-        - - !Ref 'AWS::StackName'
+      Name:
+        - ":"
+        - - AWS::StackName
           - ResourceArn
