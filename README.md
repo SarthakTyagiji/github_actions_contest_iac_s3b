@@ -1,1 +1,1 @@
-# github_actions_contest_S3_iac
+This is for s3 buckets
