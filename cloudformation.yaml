@@ -1,25 +1,20 @@
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
-  Department:
-    Description: Department
+  Parameter0Value:
     Type: String
-  Project:
-    Description: Project
+  Parameter1Value:
     Type: String
-  EnvCode:
-    Description: EnvCode
+  Parameter2Value:
     Type: String
-  ComponentCode:
-    Description: 3 character Component Code
+  Parameter3Value:
     Type: String
-  Component:
-    Description: Component
+  Parameter4Value:
     Type: String
-  System:
-    Description: System
+  Parameter5Value:
     Type: String
-  Service:
-    Description: Service Discovery Cloud Map Service ID
+  Parameter6Value:
+    Type: String
+  Parameter7Value:
     Type: String
 Resources:
   Bucket:
@@ -32,19 +27,7 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-  BucketInstance:
-    Type: AWS::ServiceDiscovery::Instance
-    Properties:
-      InstanceAttributes:
-        NAME: Bucket
-        TYPE: S3.Bucket
-        ARN: Bucket.Arn
-        URL: http://${Bucket}.s3-website-${AWS::Region}.amazonaws.com/
-        ID: NA
-        COMPONENT: ${ComponentCode}-${Component}
-        SYSTEM: System
-      InstanceId: ${System}-${ComponentCode}-${Component}
-      ServiceId: Service
+  BucketPolicy:
     DependsOn:
       - Bucket
 Outputs:
