@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  Department:
+    Description: 'Department'
+    Type: String
+  Project:
+    Description: 'Project'
+    Type: String
+  EnvCode:
+    Description: 'EnvCode'
+    Type: String     
+  ComponentCode:
+    Description: '3 character Component Code'
+    Type: String
+  Component:
+    Description: 'Component'
+    Type: String
+  System:
+    Description: 'System'
+    Type: String
+  Service:
+    Description: 'Service Discovery Cloud Map Service ID'
+    Type: String
+Resources:
+  Bucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub '${Department}-${Project}-${EnvCode}-${System}-${ComponentCode}-${Component}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  BucketInstance:
+    Type: AWS::ServiceDiscovery::Instance
+    Properties:
+      InstanceAttributes:
+        NAME: !Ref Bucket
+        TYPE: S3.Bucket
+        ARN: !GetAtt Bucket.Arn
+        URL: !Sub 'http://${Bucket}.s3-website-${AWS::Region}.amazonaws.com/'
+        ID: NA
+        COMPONENT: !Sub '${ComponentCode}-${Component}'
+        SYSTEM: !Ref System
+      InstanceId: !Sub '${System}-${ComponentCode}-${Component}'
+      ServiceId: !Ref Service
+    DependsOn:
+      - Bucket
+Outputs:
+  ResourceName:
+    Description: The name of the component resource created
+    Value: !Ref Bucket
+    Export:
+      Name: !Join 
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - ResourceName
+  ResourceArn:
+    Description: The ARN of the component resource created
+    Value: !GetAtt Bucket.Arn
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - ResourceArn
